@@ -46,6 +46,9 @@ function CampaignsContent() {
   const [showPreview, setShowPreview] = useState(false);
   const [isHtmlMode, setIsHtmlMode] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const [showSendTest, setShowSendTest] = useState(false);
+  const [testEmail, setTestEmail] = useState('');
+  const [sendingTest, setSendingTest] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -589,6 +592,13 @@ function CampaignsContent() {
                     >
                       Preview
                     </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowSendTest(true)}
+                    className="px-2 py-1 text-xs rounded border border-border hover:bg-muted"
+                  >
+                    Send Test
+                  </button>
                     <label className="text-xs text-muted-foreground">Mode:</label>
                     <button
                       type="button"
@@ -667,6 +677,78 @@ function CampaignsContent() {
               >
                 {creatingCampaign ? (editingCampaign ? 'Updating...' : 'Creating...') : (editingCampaign ? 'Update Campaign' : 'Create Campaign')}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Send Test Modal */}
+      {showSendTest && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-card rounded-lg border border-border p-6 w-full max-w-md">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Send Test Email</h3>
+              <button onClick={() => setShowSendTest(false)} className="text-sm underline">Close</button>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-medium">To Email</label>
+                <input
+                  type="email"
+                  value={testEmail}
+                  onChange={(e) => setTestEmail(e.target.value)}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  placeholder="you@example.com"
+                />
+              </div>
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  onClick={() => setShowSendTest(false)}
+                  className="px-3 py-2 text-sm rounded border border-border hover:bg-muted"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!testEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(testEmail)) {
+                      toast.error('Enter a valid email');
+                      return;
+                    }
+                    if (!senderName.trim() || !senderEmail.trim() || !subject.trim() || !pitch.trim()) {
+                      toast.error('Fill sender, subject and content first');
+                      return;
+                    }
+                    try {
+                      setSendingTest(true);
+                      const pdfBase64 = null; // optional: could attach chosen PDF if needed
+                      const res = await fetch('/api/campaigns/test', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          toEmail: testEmail.trim(),
+                          senderName: senderName.trim(),
+                          senderEmail: senderEmail.trim(),
+                          subject: subject.trim(),
+                          pitch,
+                          pdfBase64,
+                        }),
+                      });
+                      if (!res.ok) throw new Error('Failed');
+                      toast.success('Test email sent');
+                      setShowSendTest(false);
+                      setTestEmail('');
+                    } catch (e) {
+                      toast.error('Failed to send test email');
+                    } finally {
+                      setSendingTest(false);
+                    }
+                  }}
+                  disabled={sendingTest}
+                  className="px-3 py-2 text-sm rounded bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                >
+                  {sendingTest ? 'Sending...' : 'Send Test'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
