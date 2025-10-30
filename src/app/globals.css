@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #2563eb; /* blue-600 */
+  --primary-foreground: #ffffff;
+  --muted: #f3f4f6; /* gray-100 */
+  --muted-foreground: #6b7280; /* gray-500 */
+  --card: #ffffff;
+  --border: #e5e7eb; /* gray-200 */
+  --ring: #93c5fd; /* blue-300 */
+  --radius: 0.75rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0f17;
+    --foreground: #e5e7eb;
+    --primary: #60a5fa; /* blue-400 */
+    --primary-foreground: #0b0f17;
+    --muted: #0f172a; /* slate-900 */
+    --muted-foreground: #94a3b8; /* slate-400 */
+    --card: #0b1220;
+    --border: #1f2937; /* gray-800 */
+    --ring: #334155; /* slate-700 */
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    Segoe UI, Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Better focus styles */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+/* Smooth card shadow utility (used via className) */
+.shadow-soft {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
